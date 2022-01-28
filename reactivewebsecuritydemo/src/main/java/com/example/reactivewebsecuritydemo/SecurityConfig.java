@@ -25,8 +25,7 @@ public class SecurityConfig {
 
     Jwttokenvalidationfilter jwttokenvalidationfilter;
 
-    SecurityConfig(Jwttokenvalidationfilter jwttokenvalidationfilter)
-    {
+    SecurityConfig(Jwttokenvalidationfilter jwttokenvalidationfilter) {
 
         this.jwttokenvalidationfilter = jwttokenvalidationfilter;
     }
@@ -54,20 +53,28 @@ public class SecurityConfig {
 
         SecurityWebFilterChain filterChain = httpsecurity.authorizeExchange()
                 .pathMatchers(HttpMethod.DELETE).denyAll()
-                .pathMatchers("/login", "/logout","/favicon.ico","/public").permitAll()
+                .pathMatchers("/login", "/logout", "/favicon.ico", "/public").permitAll()
                 .pathMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
                 .anyExchange().authenticated()
                 .and().formLogin()
                 //.loginPage("/login") //default
-                .authenticationFailureHandler((exchange, exception) -> Mono.error(exception))
+                //.authenticationFailureHandler((exchange, exception) -> Mono.error(exception))
                 .authenticationSuccessHandler(new WebFilterChainServerAuthenticationSuccessHandler())
                 //  .and()
-                  .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .and()
-                 .addFilterAfter(jwttokenvalidationfilter,SecurityWebFiltersOrder.CSRF)
+                .addFilterAfter(jwttokenvalidationfilter, SecurityWebFiltersOrder.CSRF)
                 .build();
 
         return filterChain;
+        /**
+         * AccessDeniedHandler - this handles issues like when a user not having required roles.
+         * AuthenticationEntryPoint - this handles issues like when a user tries to access a resource without appropriate authentication elements.
+         *
+         * AuthenticationFailureHandler - this handles issues like when a user is not found(i.e. UsernameNotFoundException) or other exceptions thrown inside authentication provider. In fact, this handles other authentication exceptions that are not handled by AccessDeniedException and AuthenticationEntryPoint.
+         *
+         * AuthenticationSuccessHandler - this helps to do stuff like redirection after a user is successfully authenticated.
+         */
     }
 
    /* @Bean
@@ -85,8 +92,6 @@ public class SecurityConfig {
         return new MapReactiveUserDetailsService(user,admin);
     }
     */
-
-
 
 
 }

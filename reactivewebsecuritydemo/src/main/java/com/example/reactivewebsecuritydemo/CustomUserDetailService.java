@@ -16,8 +16,7 @@ public class CustomUserDetailService implements ReactiveUserDetailsService {
 
     Map<String, UserDetails> users;
 
-    public CustomUserDetailService(Map<String, UserDetails> users)
-    {
+    public CustomUserDetailService(Map<String, UserDetails> users) {
         this.users = users;
     }
 
@@ -27,19 +26,20 @@ public class CustomUserDetailService implements ReactiveUserDetailsService {
 
     @Override
     public Mono<UserDetails> findByUsername(String username) {
-        System.out.println(" FindUserByName : "+username);
-        System.out.println(" UserDetails  : "+users.get(username));
+        System.out.println(" FindUserByName : " + username);
         return Mono.just(username)
-                .map(user -> users.get(user))
-                .flatMap(userDetails -> {
-                    if(userDetails==null)
-                    {
-                        System.out.println("User " + username + " Not Found");
-                        return Mono.error(new UsernameNotFoundException("User " + username + " Not Found"));
-                    }
-                    return Mono.just(userDetails);
-                }).map(userDetails -> userDetails);
+                .flatMap(user -> getuserdetails(user));
+    }
 
-
+    private Mono<UserDetails> getuserdetails(String user) {
+        UserDetails userdetails = users.get(user);
+        if (userdetails == null) {
+            System.out.println("User " + user + " Not Found");
+            return Mono.error(new UsernameNotFoundException("User " + user + " Not Found"));
+        } else {
+            System.out.println(" UserDetails  : " + userdetails);
+            return Mono.just(userdetails);
+        }
     }
 }
+
