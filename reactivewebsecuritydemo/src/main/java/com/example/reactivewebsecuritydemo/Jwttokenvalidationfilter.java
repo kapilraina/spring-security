@@ -119,23 +119,9 @@ public class Jwttokenvalidationfilter implements WebFilter {
         unp.setDetails(exchange.getRequest());
         System.out.println("Setting Auth in Security Context " + unp);
         return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(unp));
-       /* ReactiveSecurityContextHolder
-                .getContext()
-                .map(sc -> setAuth(sc,unp))
-                .flatMap(scvalidated -> scvalidated)
-                .doOnNext(sc-> System.out.println("Security Context = "+ sc))
-                .subscribe();
-
-        return Mono.empty().then();*/
-
 
     }
 
-    private Mono<SecurityContext> setAuth(SecurityContext securityContext, UsernamePasswordAuthenticationToken unp) {
-        securityContext.setAuthentication(unp);
-        return Mono.just(securityContext);
-
-    }
 
 
     private Mono<Void> handleError(ServerWebExchange exchange, Exception ex) {
